@@ -3,23 +3,30 @@ import cn from 'classnames';
 import 'bulma/css/bulma.css';
 import './App.scss';
 
-type Good = string;
+type Good = {
+  id?: number;
+  name: string;
+  price?: number;
+};
 
-type SortType = 'alphabet' | 'length';
+enum SortType {
+  Alphabet = 'alphabet',
+  Length = 'length',
+}
 
 type SortGoods = (type: SortType) => void;
 
 export const goodsFromServer: Good[] = [
-  'Dumplings',
-  'Carrot',
-  'Eggs',
-  'Ice cream',
-  'Apple',
-  'Bread',
-  'Fish',
-  'Honey',
-  'Jam',
-  'Garlic',
+  { name: 'Dumplings' },
+  { name: 'Carrot' },
+  { name: 'Eggs' },
+  { name: 'Ice cream' },
+  { name: 'Apple' },
+  { name: 'Bread' },
+  { name: 'Fish' },
+  { name: 'Honey' },
+  { name: 'Jam' },
+  { name: 'Garlic' },
 ];
 
 export const App: FC = () => {
@@ -29,13 +36,13 @@ export const App: FC = () => {
   const isModified: boolean =
     JSON.stringify(sortedGoods) !== JSON.stringify(goodsFromServer);
 
-  const sortGoods: SortGoods = (type) => {
+  const sortGoods: SortGoods = type => {
     const goods = [...goodsFromServer];
 
-    if (type === 'alphabet') {
-      goods.sort((a, b) => a.localeCompare(b));
-    } else if (type === 'length') {
-      goods.sort((a, b) => a.length - b.length);
+    if (type === SortType.Alphabet) {
+      goods.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (type === SortType.Length) {
+      goods.sort((a, b) => a.name.length - b.name.length);
     }
 
     if (isReversed) {
@@ -65,7 +72,7 @@ export const App: FC = () => {
           className={cn('button is-info', {
             'is-light': sortType !== 'alphabet',
           })}
-          onClick={() => sortGoods('alphabet')}
+          onClick={() => sortGoods(SortType.Alphabet)}
         >
           Sort alphabetically
         </button>
@@ -75,7 +82,7 @@ export const App: FC = () => {
           className={cn('button is-success', {
             'is-light': sortType !== 'length',
           })}
-          onClick={() => sortGoods('length')}
+          onClick={() => sortGoods(SortType.Length)}
         >
           Sort by length
         </button>
@@ -97,8 +104,8 @@ export const App: FC = () => {
 
       <ul>
         {sortedGoods.map(good => (
-          <li key={good} data-cy="Good">
-            {good}
+          <li key={good.name} data-cy="Good">
+            {good.name}
           </li>
         ))}
       </ul>
